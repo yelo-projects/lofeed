@@ -9,6 +9,7 @@
 </body>
 
 <template name="note_tree">
+  {{> search}}
   {{#if error}}
   <span id="error" style="color: red;">
     {{error}} 
@@ -33,11 +34,15 @@
     <div class="selector"></div>
     <div class="handle"></div>
     <div class="note-element">
-      <div class="name" cols="5" rows="1"><pre>{{name}}</pre></div>
+	  <div class="name"><pre id="name-{{_id}}">{{{name_processed}}}</pre></div>
+	  <textarea class="name-input" cols="5" rows="1" id="input-name-{{_id}}">{{name}}</textarea>
     </div>
     <div class="hidden">
-      <a class="action-share-url" href="/{{_id}}"><span>{{_id}}</span></a>
-      <a href="#" class="action-delete"></a>
+		<span class="share-url">
+			<input type="text" class="copy-url" value="{{_id}}">
+			<a class="action-share-url" href="/{{_id}}"></a>
+		</span>
+	  <a href="#" class="action-delete"></a>
     </div>
     <div class="children {{closed}}">
       {{#each children}}
@@ -45,6 +50,12 @@
       {{/each}}
     </div>
   </div>
+</template>
+
+<template name="search">
+    <div class="search">
+        <input type="search" id="input-search" class="search">
+    </div>
 </template>
 
 <template name="new_note">

@@ -41,6 +41,9 @@ Meteor.methods({
       var children = Notes.remove({parent:id});
       Notes.remove(id);
   }
+, note_edit:function(id,content){	
+      Notes.update({_id:id},{$set:{name:content}});
+	}
 , note_add:function(name,parent_id){
     var HighestScoreObject = Meteor.call('note_nextHighestScoreObject',parent_id);
     var score = HighestScoreObject ? HighestScoreObject.score + 1 : 0;
@@ -145,17 +148,44 @@ if (Meteor.isClient) {
     return obj ? 'hasChildren' : 'noChildren';
   };
 
-  Template.note.preserve(['.note']);
 
   Template.note.children = function (){
     return Notes.find({parent:this._id},{sort: {score: 1, name: 1}})
   };
+
+  Template.note.name_processed = function(){
+	  return this.name
+		  .replace(/&/g, '&amp;')
+		  .replace(/</g, '&lt;')
+		  .replace(/>/g, '&gt;')
+		  .replace(/"/g, '&quot;')
+		  .replace(/\[\s?\]/g,'<input type="checkbox" class="checkbox">')
+		  .replace(/\[\*\]/g,'<input type="checkbox" class="checkbox" checked>')
+		  .replace(/->/g,'&rarr;')
+		  .replace(/(\s|^)(@[^\s].*?)(\s|\n|$)/g,'$1<a href="#" rel="$2" class="link-at">$2</a>$3')
+		  .replace(/(\s|^)(#[^\s].*?)(\s|\n|$)/g,'$1<a href="#" rel="$2" class="link-hash">$2</a>$3')
+		  .replace(/\*(\w+?)\*/g,"<em>$1</em>")
+		  .replace(/-(\w+?)-/g,"<strikethrough>$1</strikethrough>")
+		  .replace(/_(\w+?)_/g,"<u>$1</u>")
+	  ;
+  }
 
   Template.note_tree.error = function () {
     return Session.get("error");
   };
 
   Template.note.events({
+    'click a.link-at, click a.link-hash':function(e){
+        e.preventDefault();
+        var term = e.target.getAttribute('rel')
+        , search = document.getElementById('input-search');
+        if(e.ctrlKey){
+          search.value = (search.value ? search.value + ' ' : '' )+ term;
+          return false
+        }
+        search.value = term
+        return false;
+    },
     'click a.action-delete': function(evt){
       var parent = this.parent || null;
       Meteor.call("note_delete",this._id,parent);
@@ -168,9 +198,34 @@ if (Meteor.isClient) {
     'click input.add': function(){
       note_add(0);
     },
-    'click': function(e){
+	'click input.copy-url':function(e){
+		e.preventDefault();
+		e.target.select();
+		return false
+	},
+	'click input.checkbox':function(e){
+		var checkbox = e.target
+		,	checked = checkbox.checked ? '*':''
+		,	parent = checkbox.parentNode
+		,	id = parent.id
+		,	checkboxes = $('input.checkbox',parent)
+		,	str = document.getElementById('input-'+id).value
+		,	curr,l = checkboxes.length
+		;
+		for(curr=0;curr<l;curr++){
+			if(checkbox === checkboxes[curr]){break;}
+		}
+		str = str.replace(/\[\s?|\*\]/g,function (match, pos, original) {
+			var answer = (curr == 0) ? '['+checked : match;
+		    curr--;
+			return answer;
+		});
+		Meteor.call('note_edit',id.replace('name-',''),str);
+	},
+    'dblclick .name': function(e){
       var current_note = Session.get("selected_note");
       var id = (current_note == this._id) ? 0 : this._id;
+	  var $element = $(e.target.parentNode.parentNode).toggleClass('editable');
       Session.set("selected_note", id);
       Router.set(this._id);
       e.stopImmediatePropagation();
