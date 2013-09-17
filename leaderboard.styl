@@ -1,0 +1,138 @@
+@import 'nib'
+
+global-reset()
+body, html
+    width 100%
+
+/*******************************************
+    FONT AWESOME
+*******************************************/
+
+@font-face 
+  font-family 'FontAwesome'
+  src: url('font/fontawesome-webfont.eot?v=3.2.1')
+  src: url('font/fontawesome-webfont.eot?#iefix&v=3.2.1') format('embedded-opentype'), url('font/fontawesome-webfont.woff?v=3.2.1') format('woff'), url('font/fontawesome-webfont.ttf?v=3.2.1') format('truetype'), url('font/fontawesome-webfont.svg#fontawesomeregular?v=3.2.1') format('svg')
+  font-weight normal
+  font-style normal
+
+[class^="action-"], [class*=" action-"], .handle
+    font-family FontAwesome
+    font-weight normal
+    font-style normal
+    text-decoration inherit
+    -webkit-font-smoothing antialiased
+    width 2em
+    height 2em
+    line-height 2em
+    top 0
+    left 0
+    color:black
+    &:after
+        padding-left .7em
+    &:visited
+        color black
+    &:hover
+        color #990000
+
+
+/*******************************************
+    SPECIFICS
+*******************************************/
+
+#note_tree
+    width 960px
+    margin 0 auto
+
+.note
+    display block
+    position relative
+    min-height 2em
+    background-color #f2f2f2
+    //border-bottom 1px dotted black
+    &:hover
+        >.selector
+            background-color black
+        >.hidden
+            display block
+    &.selected
+        >.selector
+            background-color #f90000
+
+.note-element
+    margin-left 2em
+    min-height 1.5em
+    padding-top .5em
+
+.children
+    display block
+    margin-left 1em
+    display none
+    transition 0.3s ease-in
+    &.open
+        display block
+    .note:last-child
+        border-bottom none
+
+.selector
+    position absolute
+    top 0
+    left 0
+    width 3px
+    height 2em
+    background transparent
+
+.handle
+    position absolute
+
+.hidden
+    display none
+    position absolute
+    top 0
+    right 1em
+
+.button
+    width 2em
+    height 2em
+    display inline-block
+    overflow hidden
+    margin-left 1em
+
+.note
+    &.hasChildren
+        >.handle
+            &:after
+                content "\f107"
+    &.closed
+        &.hasChildren
+            >.handle
+                &:after
+                    content "\f105"
+
+.new_note
+    display:block
+    width:100%
+
+.action-move-up
+    &:after
+        content "\f077"
+
+.action-move-down
+    &:after
+        content "\f078"
+
+.action-delete
+    &:after
+        content "\f014"
+
+.action-add
+    &:after
+      content "\f067"
+
+.action-share-url
+    span   
+        display none
+    &:after
+        content "\f045"
+    &:hover
+        span
+            display inline

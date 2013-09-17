@@ -1,0 +1,59 @@
+<head>
+  <title>Note Tree</title>
+</head>
+
+<body>
+  <div id="outer">
+    {{> note_tree}}
+  </div>
+</body>
+
+<template name="note_tree">
+  {{#if error}}
+  <span id="error" style="color: red;">
+    {{error}} 
+  </span>
+  {{/if}}
+  {{> new_note }}
+  <div id="note_tree">
+    {{#if root}}
+      {{#with root}}
+          {{> note}}
+      {{/with}}
+    {{else}}
+      {{#each notes}}
+        {{> note}}
+      {{/each}}
+    {{/if}}
+  </div>
+</template>
+
+<template name="note">
+  <div class="note {{closed}} {{selected}} {{hasChildren}}" id="{{_id}}">
+    <div class="selector"></div>
+    <div class="handle"></div>
+    <div class="note-element">
+      <div class="name" cols="5" rows="1"><pre>{{name}}</pre></div>
+    </div>
+    <div class="hidden">
+      <a class="action-share-url" href="/{{_id}}"><span>{{_id}}</span></a>
+      <a href="#" class="action-delete"></a>
+    </div>
+    <div class="children {{closed}}">
+      {{#each children}}
+        {{> note}}
+      {{/each}}
+    </div>
+  </div>
+</template>
+
+<template name="new_note">
+  <div class="new_note">
+    <textarea id="new_note_name{{#if _id}}_{{_id}}{{/if}}"/></textarea>
+    <a href="#" class="button action-add"/></a>
+    <div class="move-container">
+      <a href="#" class="button move action-move-up"></a>
+      <a href="#" class="button move action-move-down"></a>
+    </div>
+  </div>
+</template>
