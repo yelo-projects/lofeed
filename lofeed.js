@@ -86,7 +86,7 @@ function note_add(){
   var id = Session.get("selected_note") || 0
   var elementId = 'new_note_name'+(id? '_'+id:'');
   var textbox = document.getElementById("new_note_name");
-  var new_note_name = textbox.value.trim();//.replace(/\n|\r/g,'<br>');
+  var new_note_name = textbox.innerHTML.trim();
   if (Validation.valid_name(new_note_name)) {
     Meteor.call('note_add',new_note_name,id)
   }
@@ -155,6 +155,8 @@ if (Meteor.isClient) {
 
   Template.note.name_processed = function(){
 	  return this.name
+		  .replace(/(<br\/?>)+?$/,'')//remove trailing line carriages
+		  .replace(/<br\/?>/g,'BBBRRR')
 		  .replace(/&/g, '&amp;')
 		  .replace(/</g, '&lt;')
 		  .replace(/>/g, '&gt;')
@@ -167,6 +169,7 @@ if (Meteor.isClient) {
 		  .replace(/\*(\w+?)\*/g,"<em>$1</em>")
 		  .replace(/-(\w+?)-/g,"<strikethrough>$1</strikethrough>")
 		  .replace(/_(\w+?)_/g,"<u>$1</u>")
+		  .replace(/BBBRRR/g,'<br>')
 	  ;
   }
 

@@ -34,8 +34,7 @@
     <div class="selector"></div>
     <div class="handle"></div>
     <div class="note-element">
-	  <div class="name"><pre id="name-{{_id}}">{{{name_processed}}}</pre></div>
-	  <textarea class="name-input" cols="5" rows="1" id="input-name-{{_id}}">{{name}}</textarea>
+		<div class="name" contenteditable="true" id="name-{{_id}}">{{{name_processed}}}</div>
     </div>
     <div class="hidden">
 		<span class="share-url">
@@ -60,7 +59,7 @@
 
 <template name="new_note">
   <div class="new_note">
-    <textarea id="new_note_name{{#if _id}}_{{_id}}{{/if}}"/></textarea>
+    <div contenteditable="true" id="new_note_name"/></div>
     <a href="#" class="button action-add"/></a>
     <div class="move-container">
       <a href="#" class="button move action-move-up"></a>
